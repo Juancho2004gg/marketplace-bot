@@ -10,6 +10,7 @@ from configparser import ConfigParser
 from time import sleep
 
 ## webdriver
+from connectDB import connection
 from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
@@ -21,6 +22,8 @@ from selenium.webdriver.support.ui import Select
 
 rvtopost = input("NAME OF RV TO POST?")
 path = 'C:\/Users\/rosit\/OneDrive\/Documents\/proyecto python\/facebook-auto-post-main>'
+service = Service(verbose = True)
+
 class App:
     def __init__(self, email= "", password= "",
                  path="", language="", main_url="", marketplace_url="", binary_location="", driver_location="", time_to_sleep="", rvtopost=""):
@@ -38,17 +41,20 @@ class App:
         """
         # Options for driver
         options = Options()
-        options.binary_location = binary_location
-        
+        options.add_argument("dom-webnotifications-disabled")
+        options.add_argument("-inprivate")
+        ##self.driver_path = driver_location
         
         # INITIALIZE DRIVER (EDGE)
-        self.driver = webdriver.Edge(service = Service(EdgeChromiumDriverManager.install(self)), options=options)
+        self.driver = webdriver.Edge(options= options, executable_path= driver_location)
         self.driver.maximize_window()
         self.main_url = main_url
-        self.marketplace_url = marketplace_url
+        self.marketplace_url = "https://www.facebook.com/marketplace/create/vehicle"
         self.driver.get(self.main_url)
         self.log_in()
+        sleep(3)
         self.move_from_home_to_marketplace_create_item()
+        sleep(4)
         self.posts = self.fetch_all_posts(rvtopost)
         for post in self.posts:
             self.create_post(post)
@@ -66,7 +72,6 @@ class App:
 
 
     def move_from_home_to_marketplace_create_item(self):
-        WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//a[@aria-label="Marketplace"]')))
         self.driver.get(self.marketplace_url)
 
 
@@ -137,28 +142,28 @@ class App:
 
 
     def ispublished(self, rvname):
-        con = psycopg2.connect('articles.db')
+        con = psycopg2.connect('postsdb.db')
         cur = con.cursor()
-        postgres_query = """ UPDATE rv2 SET published = 1 WHERE path = '{rvname}'"""
+        postgres_query = """ UPDATE camperdata SET ispublished = 1 WHERE path = '{rvname}'"""
         cur.execute(postgres_query)
         cur.close()
         
     def fetch_all_posts(self, rvtopost):
         posts = None
+        con = connection()
         try:
-            conn = conn.connect('articles.db')
-            cursor = conn.cursor()
-            postgres_query = f"SELECT * FROM Campers WHERE ispublished = false"
+            cursor = con.cursor()
+            postgres_query = f"SELECT * FROM camperdata WHERE ispublished = 0"
             cursor.execute(postgres_query)
             posts = cursor.fetchall()
             cursor.close()
 
         except psycopg2.Error as error:
-            print("Failed to read data from sqlite table", error)
+            print("Failed to read data from postgres table", error)
 
         finally:
-            if (conn):
-                conn.close()
+            if (con):
+                con.close()
         return posts
 
 

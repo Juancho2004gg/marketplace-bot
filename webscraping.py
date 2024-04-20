@@ -11,7 +11,7 @@ import json
 import re
 import requests
 import os
-from improvedScraping import super_scraping
+from get_pages_links import get_pages_links
 # CREATE FOLDER
 datos = dict()
 ## scheme is (id, ispublished, path, year, price, make, model, description)
@@ -176,7 +176,7 @@ def main():
     finally:
         os.mkdir('RVs')
 
-    pagelinks = super_scraping() ## importing super_scraping function
+    pagelinks = get_pages_links() ## importing get_pages_links function
     for link in pagelinks:
         page = re.sub(".*product-page/", "", link)
         folder_name = 'RVs\/' + page

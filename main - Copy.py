@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-## cookies
-import pickle
-
 ## scraping and SQL
 import json
 import psycopg2
@@ -22,8 +19,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.keys import Keys
 
+##rvtopost = input("NAME OF RV TO POST?")
+path = 'C:\/Users\/rosit\/OneDrive\/Documents\/proyecto python\/facebook-auto-post-main>'
 service = Service(verbose = True)
 
 class App:
@@ -63,19 +61,13 @@ class App:
         self.driver.quit()
 
 
-##    def log_in(self):
-##        email_input = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.ID, "email")))
-##        email_input.send_keys(self.email)
-##        password_input = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.ID, "pass")))
-##        password_input.send_keys(self.password)
-##        login_button = WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//*[@type='submit']")))
-##        login_button.click()
-
     def log_in(self):
-        cookies = pickle.load(open("cookies.pkl","rb"))
-        for cookie in cookies:
-            self.driver.add_cookie(cookie)
-        self.driver.refresh()
+        email_input = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.ID, "email")))
+        email_input.send_keys(self.email)
+        password_input = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.ID, "pass")))
+        password_input.send_keys(self.password)
+        login_button = WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//*[@type='submit']")))
+        login_button.click()
 
 
     def move_from_home_to_marketplace_create_item(self):
@@ -119,23 +111,18 @@ class App:
         modellink = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div/div[1]/div[1]/div[1]/div/div[3]/div[1]/div[2]/div/div/div[9]/div/label/div/div/input"
         pricelink = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div/div[1]/div[1]/div[1]/div/div[3]/div[1]/div[2]/div/div/div[11]/div/div/label/div/div/input"
         desclink = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div/div[1]/div[1]/div[1]/div/div[3]/div[1]/div[2]/div/div/div[18]/div/div/label/div/div/textarea"
-        wait = WebDriverWait(self.driver, 20)
-        ## scroll page
-        sleep(1)
-        pyautogui.moveTo(x=228, y=424) ## x = 228 and y = 424
-        pyautogui.click()
-        pyautogui.press("down", presses=3)
-        ##
-        brand_input = wait.until(EC.presence_of_element_located((By.XPATH, brandlink)))
+
+
+        brand_input = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, brandlink)))
         brand_input.send_keys(brand)
 
-        model_input = wait.until(EC.presence_of_element_located((By.XPATH, modellink)))
+        model_input = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, modellink)))
         model_input.send_keys(model)
 
-        price_input = wait.until(EC.presence_of_element_located((By.XPATH, pricelink)))
+        price_input = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, pricelink)))
         price_input.send_keys(price)
 
-        description_input = wait.until(EC.presence_of_element_located((By.XPATH, desclink)))
+        description_input = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, desclink)))
         description_input.send_keys(description)
 
 
@@ -181,7 +168,6 @@ class App:
 
         wait = WebDriverWait(self.driver, 20)
         pics_path = post[2]
-        print(pics_path)
         self.add_photos_to_post(pics_path)
 
         category_link = '/html/body/div[1]/div/div[1]/div/div[3]/div/div/div/div[1]/div[1]/div[1]/div/div[2]/div[1]/div[2]/div/div/div[3]/div/div/label'
@@ -199,6 +185,7 @@ class App:
         year_input =  wait.until(EC.visibility_of_element_located((By.XPATH, year_link)))
         year_input.click()
         sleep(self.time_to_sleep)
+        print(post)
         pyautogui.write(str(post[3])) ## 3 is the index position in the DB, that have the value of year.
         pyautogui.press('enter')
         sleep(self.time_to_sleep)
@@ -234,10 +221,10 @@ class App:
 
         self.ispublished(post[2]) ## post[2] equal folder path of RV pics
 
-    def get_element_position(self, key, specific):
-        if specific in self.marketplace_options[key]:
-            return str(self.marketplace_options[key][specific])
-        return -1
+##    def get_element_position(self, key, specific):
+##        if specific in self.marketplace_options[key]:
+##            return str(self.marketplace_options[key][specific])
+##        return -1
 
 
     def post_in_more_places(self, groups):

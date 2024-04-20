@@ -124,14 +124,6 @@ def scraping(page):
 
     return wix_warmup
 
-##def createfile(page):
-##    with open(f'{page}/{page}.txt', 'w') as f:
-##        f.write(datos['year']+'\n')
-##        f.write(str(datos['price'])+'\n')
-##        f.write(datos['brand']+'\n')
-##        f.write(datos['model']+'\n')
-##        f.write(datos['desc'])
-
 def main():
     valid = True
     while(valid):

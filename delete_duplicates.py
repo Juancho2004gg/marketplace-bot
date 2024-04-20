@@ -1,11 +1,11 @@
 #-------------------------------------------------------------------------------
 # Name:        delete duplicates
-# Purpose:
+# Purpose: In case this bot publish duplicate products, you can execute this code to delete already published products from the main database
 #
-# Author:      rosit
+# Author:      Juan
 #
 # Created:     20/07/2023
-# Copyright:   (c) rosit 2023
+# Copyright:   (c) Juan 2023
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 import psycopg2

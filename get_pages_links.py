@@ -1,11 +1,11 @@
 #-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
+# Name:        get_pages_links
+# Purpose: Getting the pages links from the website vhtrvs.com. This code will help to scrape all imgs and info about the products the Bot is made to publish.
 #
-# Author:      rosit
+# Author:      Juan
 #
 # Created:     13/07/2023
-# Copyright:   (c) rosit 2023
+# Copyright:   (c) Juan 2023
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 

@@ -28,7 +28,7 @@ def scrolling(driver):
             break
         last_height = new_height
 
-def super_scraping():
+def get_pages_links():
 
     options = Options()
     options.add_argument("dom-webnotificationes-disabled")
@@ -62,4 +62,4 @@ def super_scraping():
 
     return pages
 if __name__ == '__main__':
-    super_scraping()
+    get_pages_links()

@@ -1,8 +1,11 @@
+import shutil ##library to delete a folder with files
+
+
 import psycopg2
 from bs4 import *
 import PySimpleGUI as sg
 import random
-from connectDB import connection, insertValues
+from connectDB import connection, insertValues, createTable
 ##from create_csv import writecsv
 import json
 import re
@@ -12,7 +15,6 @@ from improvedScraping import super_scraping
 # CREATE FOLDER
 datos = dict()
 ## scheme is (id, ispublished, path, year, price, make, model, description)
-
 
 def folder_create(img_links,folder_name):
     try:
@@ -29,6 +31,7 @@ def extractName(page):
     info = page.split("-")
     length = len(info)
 
+
     if length > 3: ## three because a normal name is year-brand-model, this has a length of three when we splited it
 
         datos["brand"] = info[1] ## POSITION 1 = BRAND NAME
@@ -43,10 +46,11 @@ def extractName(page):
 
 
 def extractYear(page):
-    pattern = re.compile("^([0-9]{4})")
-    price = re.match(pattern, page)
-
-    datos["year"] = int(price.group())
+    print(page)
+    year_name = page.lower()
+    page = year_name.replace(" ","-")
+    info = page.split("-")
+    datos["year"] = info[0]
 
 def download_images(img_links,folder_name):
 
@@ -152,9 +156,30 @@ def remove_duplicates():
         if(con):
             con.close()
 def main():
-    pagelinks = super_scraping()
+    """
+    This part is Creating a table
+    """
+    con = connection()
+    cur = con.cursor()
+    createTable(cur)
+
+    cur.close()
+    con.commit()
+    con.close()
+
+    ## ELIMINATE OLD RVS PICTURES
+
+    try:
+        shutil.rmtree('RVs')
+    except:
+        pass
+    finally:
+        os.mkdir('RVs')
+
+    pagelinks = super_scraping() ## importing super_scraping function
     for link in pagelinks:
         page = re.sub(".*product-page/", "", link)
+        folder_name = 'RVs\/' + page
 
         ## find preload imgs
         wixdict = scraping(link)
@@ -165,7 +190,7 @@ def main():
         img_links = extract_img(wixdict, page)
 
         # Call folder create function
-        folder_create(img_links, page) # the folder function has a download img function
+        folder_create(img_links, folder_name) # the folder function has a download img function
 
         # Save info to database
         database(datos, page)

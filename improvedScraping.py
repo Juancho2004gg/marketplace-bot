@@ -13,25 +13,35 @@ from bs4 import *
 import re
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.edge.options import Options
 from time import sleep
 
 pages:list = []
 
+def scrolling(driver):
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while True:
+        driver.execute_script("window.scroll(0, document.body.scrollHeight);")
+        sleep(5)
+        new_height = driver.execute_script("return document.body.scrollHeight;")
+        if new_height == last_height:
+            break
+        last_height = new_height
+
 def super_scraping():
 
-    driver = webdriver.Edge(executable_path=r'C:\path\to\msedgedriver.exe')
+    options = Options()
+    options.add_argument("dom-webnotificationes-disabled")
+    options.add_argument("-inprivate")
+
+    driver = webdriver.Edge(options = options, executable_path= r'C:\path\to\msedgedriver.exe')
+    driver.maximize_window()
     driver.get('https://www.vhtrvs.com/shop')
     sleep(3)
-    ## FIRST BUTTON
-    button = driver.find_element(By.XPATH, '/html/body/div[1]/div/div[3]/div/main/div/div/div/div[2]/div/div/div/section/div[2]/div/div/div/div/div/div/section/div/button')
-    button.click()
-    sleep(3)
 
-    ## SECOND BUTTON
+    scrolling(driver)
 
-    button = driver.find_element(By.XPATH, '/html/body/div[1]/div/div[3]/div/main/div/div/div/div[2]/div/div/div/section/div[2]/div/div/div/div/div/div/section/div/button')
-    button.click()
-    sleep(3)
+
 
     ## REAL BUSINESS
     html_content = driver.find_element(By.XPATH, '//*[@id="TPASection_kq1hr2yl"]/div/div/div/div/section')
